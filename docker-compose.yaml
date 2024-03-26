@@ -1,0 +1,110 @@
+version: "3.5"
+
+networks:
+  sermas_dev:
+    name: sermas_dev
+
+services:
+
+  proxy:
+    image: caddy:2
+    volumes:
+      - ./config/proxy:/etc/caddy
+    networks:
+      - sermas_dev
+    ports:
+      - 8080:8080
+
+  api:
+    entrypoint: npm
+    command: run start:debug
+    image: sermas/api
+    depends_on:
+      - proxy
+      - mqtt
+      - mongodb
+      - chromadb
+      - keycloak
+      - redis
+    networks:
+      - sermas_dev
+    environment:
+      - ENV_PATH=/config/.env
+      - CONFIG_BASEPATH=/config
+    volumes:
+      - ./config/api:/config
+      - ../../backend/api:/app
+
+  mqtt:
+    image: iegomez/mosquitto-go-auth:latest
+    networks:
+      - sermas_dev
+    volumes:
+      - ./config/mqtt:/etc/mosquitto
+
+  keycloak:
+    command: start-dev
+    image: quay.io/keycloak/keycloak:latest
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KEYCLOAK_HOSTNAME=localhost
+      - KEYCLOAK_HTTP_PORT=8080
+      - KC_HOSTNAME_STRICT=false
+      - KC_PROXY=edge
+      - KC_HTTP_RELATIVE_PATH=/keycloak
+      - KC_HOSTNAME_STRICT_HTTPS=false
+      - KC_HOSTNAME_STRICT=false
+      - KC_HOSTNAME_STRICT_BACKCHANNEL=true
+      - KC_HEALTH_ENABLED=true
+    networks:
+      - sermas_dev
+    volumes:
+      - ./config/keycloak/import:/opt/keycloak/data/import
+      - ./data/keycloak/h2:/opt/keycloak/h2
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'exec 3<>/dev/tcp/127.0.0.1/8080;echo -e \"GET /health/ready HTTP/1.1\r\nhost: http://localhost:8080\r\nConnection: close\r\n\r\n\" >&3;grep \"HTTP/1.1 200 OK\" <&3'
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mongodb:
+    image: mongo
+    networks:
+      - sermas_dev
+    volumes:
+      - ./data/mongodb:/data/db
+
+  chromadb:
+    image: ghcr.io/chroma-core/chroma:latest
+    volumes:
+      - ./data/chroma:/chroma/chroma
+
+  redis:
+    image: redis:alpine
+    volumes:
+      - ./data/redis:/data
+    networks:
+      - sermas_dev
+
+  minio:
+    image: quay.io/minio/minio:RELEASE.2024-03-21T23-13-43Z
+    command: server --address "0.0.0.0:9000" --console-address "0.0.0.0:9001" /data1 /data2
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_BROWSER_REDIRECT_URL: http://localhost:8080/minio-admin
+    networks:
+      - sermas_dev
+    healthcheck:
+      test: [ "CMD", "mc", "ready", "local" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ./data/minio/data1:/data1
+      - ./data/minio/data2:/data2

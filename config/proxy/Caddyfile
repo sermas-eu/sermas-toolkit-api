@@ -1,0 +1,33 @@
+:8080 {
+
+  log {
+    output stdout
+    level debug
+  }
+
+  route /mqtt* {
+    uri strip_prefix /mqtt
+    reverse_proxy mqtt:1884
+  }
+
+  route /.well-known/sermas.json {
+    rewrite /.well-known/sermas.json /api/.well-known/sermas.json
+  }
+
+  handle_path /minio-admin/* {
+    reverse_proxy minio:9001
+  }
+
+  route /minio* {
+    reverse_proxy minio:9000
+  }
+
+  route /keycloak* {
+    reverse_proxy keycloak:8080
+  }
+
+  route /api* {
+    reverse_proxy api:3000
+  }
+
+}
