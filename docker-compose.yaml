@@ -18,7 +18,7 @@ services:
   api:
     entrypoint: npm
     command: run start:debug
-    image: ghcr.io/sermas-eu/api
+    image: ghcr.io/sermas-eu/toolkit-api
     depends_on:
       proxy:
         condition: service_started
