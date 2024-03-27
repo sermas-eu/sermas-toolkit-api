@@ -18,19 +18,26 @@ services:
   api:
     entrypoint: npm
     command: run start:debug
-    image: sermas/api
+    image: ghcr.io/sermas-organization/api
     depends_on:
-      - proxy
-      - mqtt
-      - mongodb
-      - chromadb
-      - keycloak
-      - redis
+      proxy:
+        condition: service_started
+      mqtt:
+        condition: service_started
+      mongodb:
+        condition: service_started
+      chromadb:
+        condition: service_started
+      redis:
+        condition: service_started
+      keycloak:
+        condition: service_healthy
     networks:
       - sermas_dev
     environment:
       - ENV_PATH=/config/.env
       - CONFIG_BASEPATH=/config
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
     volumes:
       - ./config/api:/config
       - ../../backend/api:/app
@@ -66,7 +73,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          'exec 3<>/dev/tcp/127.0.0.1/8080;echo -e \"GET /health/ready HTTP/1.1\r\nhost: http://localhost:8080\r\nConnection: close\r\n\r\n\" >&3;grep \"HTTP/1.1 200 OK\" <&3'
+          'exec 3<>/dev/tcp/localhost/8080; echo -e "GET /auth/health/ready HTTP/1.1\nhost: localhost:8080\n" >&3; timeout --preserve-status 1 cat <&3 | grep -m 1 status | grep -m 1 UP; ERROR=$?; exec 3<&-; exec 3>&-; exit $ERROR'
         ]
       interval: 10s
       timeout: 5s
