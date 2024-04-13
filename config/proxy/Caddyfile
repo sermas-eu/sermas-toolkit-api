@@ -18,16 +18,16 @@
     reverse_proxy minio:9001
   }
 
-  route /minio* {
-    reverse_proxy minio:9000
-  }
-
   route /keycloak* {
     reverse_proxy keycloak:8080
   }
 
   route /api* {
     reverse_proxy api:3000
+  }
+  
+  route /* {
+    reverse_proxy kiosk:3000
   }
 
 }

@@ -1,0 +1,11 @@
+[
+    {
+        "username": "admin",
+        "password": "admin",
+        "realmRoles": [
+            "platform-admin"
+        ],
+        "emailVerified": true,
+        "enabled": true
+    }
+]
