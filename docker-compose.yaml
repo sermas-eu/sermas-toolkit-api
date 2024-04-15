@@ -46,6 +46,16 @@ services:
     networks:
       - sermas_dev
 
+  cli:
+    image: ghcr.io/sermas-eu/cli:dev
+    networks:
+      - sermas_dev
+    environment:
+      - CONFIG_DIR=/data
+    volumes:
+      - ./data/cli:/data
+      - ./apps:/apps
+
   mqtt:
     image: iegomez/mosquitto-go-auth:latest
     networks:
