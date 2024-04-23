@@ -5,6 +5,9 @@
         "realmRoles": [
             "platform-admin"
         ],
+        "firstName": "admin",
+        "lastName": "admin",
+        "email": "admin@sermas.local",
         "emailVerified": true,
         "enabled": true
     }
