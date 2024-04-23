@@ -104,6 +104,8 @@ services:
     image: ghcr.io/chroma-core/chroma:latest
     volumes:
       - ./data/chroma:/chroma/chroma
+    networks:
+      - sermas_dev
 
   redis:
     image: redis:alpine
