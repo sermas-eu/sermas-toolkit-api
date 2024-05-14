@@ -1,13 +1,14 @@
 [
     {
-        "username": "admin",
-        "password": "admin",
+        "username": "jhondoe",
+        "password": "s3cret",
         "realmRoles": [
             "platform-admin"
         ],
+        "groups": [],
         "firstName": "admin",
         "lastName": "admin",
-        "email": "admin@sermas.local",
+        "email": "jd@sermas.example.com",
         "emailVerified": true,
         "enabled": true
     }
