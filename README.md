@@ -1,5 +1,5 @@
 # sermas-toolkit-api
 
-The SERMAS Toolkit API
+This repository offer a dockerized version of the SERMAS Toolkit API.
 
-**This repository is under development**
+Follow the [tutorial to get started](https://sermas-eu.github.io/docs/getting-started)
