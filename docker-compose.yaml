@@ -65,7 +65,7 @@ services:
 
   keycloak:
     command: start-dev
-    image: quay.io/keycloak/keycloak:latest
+    image: quay.io/keycloak/keycloak:24.0.4
     environment:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
@@ -98,7 +98,7 @@ services:
     networks:
       - sermas_dev
     volumes:
-      - ./data/mongodb:/data/db
+      - mongodb:/data/db
 
   chromadb:
     image: ghcr.io/chroma-core/chroma:latest
@@ -133,3 +133,5 @@ services:
       - ./data/minio/data2:/data2
     ports:
       - 9000:9000
+volumes:
+  mongodb:
