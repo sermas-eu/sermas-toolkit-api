@@ -1,5 +1,3 @@
-version: "3.5"
-
 networks:
   sermas_dev:
     name: sermas_dev
@@ -16,7 +14,7 @@ services:
       - 8080:8080
 
   api:
-    image: ghcr.io/sermas-eu/toolkit-api:dev
+    image: ghcr.io/sermas-eu/api:dev
     depends_on:
       proxy:
         condition: service_started
@@ -133,5 +131,6 @@ services:
       - ./data/minio/data2:/data2
     ports:
       - 9000:9000
+
 volumes:
   mongodb:

@@ -22,6 +22,8 @@
     reverse_proxy keycloak:8080
   }
 
+  # NOTE: will use dev environment as default proxy, otherwise use the toolkit static build from sermas-toolkit-api
+
   route /api* {
     reverse_proxy api:3000
   }
