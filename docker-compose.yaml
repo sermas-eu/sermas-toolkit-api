@@ -53,6 +53,17 @@ services:
       - ./data/cli:/data
       - ./apps:/apps
 
+  speechbrain:
+    image: ghcr.io/sermas-eu/speechbrain:dev
+    networks:
+      - sermas_dev
+    volumes:
+      - ./data/speechbrain/models:/app/speechbrain_models
+      - ./data/speechbrain/cache/torch:/root/.cache/torch
+      - ./data/speechbrain/cache/huggingface:/root/.cache/huggingface
+      - ./data/speechbrain/data/torch:/data
+      - ./config/speechbrain:/app/config
+
   mqtt:
     image: iegomez/mosquitto-go-auth:latest
     networks:
