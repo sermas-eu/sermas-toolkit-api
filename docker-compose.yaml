@@ -70,6 +70,8 @@ services:
       - sermas_dev
     volumes:
       - ./config/mqtt:/etc/mosquitto
+    depends_on:
+      - keycloak
 
   keycloak:
     command: start-dev
@@ -89,10 +91,9 @@ services:
     networks:
       - sermas_dev
     volumes:
-      - ./config/keycloak/import:/opt/keycloak/data/import
-      - ./data/keycloak/h2:/opt/keycloak/h2
+      - keycloak:/opt/keycloak/data
     healthcheck:
-      test: [ "CMD-SHELL", 'exec 3<>/dev/tcp/localhost/8080; echo -e "GET /keycloak/health/ready HTTP/1.1\nhost: localhost:8080\n" >&3; timeout --preserve-status 1 cat <&3 | grep -m 1 status | grep -m 1 UP; ERROR=$?; exec 3<&-; exec 3>&-; exit $$ERROR' ]
+      test: [ "CMD-SHELL", 'exec 3<>/dev/tcp/localhost/8080; echo -e "GET /keycloak/health HTTP/1.1\nhost: localhost:8080\n" >&3; timeout --preserve-status 1 cat <&3 | grep -m 1 status | grep -m 1 UP; ERROR=$?; exec 3<&-; exec 3>&-; exit $$ERROR' ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -140,3 +141,4 @@ services:
 
 volumes:
   mongodb:
+  keycloak:
