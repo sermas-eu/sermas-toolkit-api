@@ -26,6 +26,8 @@ services:
         condition: service_started
       redis:
         condition: service_started
+      speechbrain:
+        condition: service_started
       keycloak:
         condition: service_healthy
     networks:
@@ -58,10 +60,7 @@ services:
     networks:
       - sermas_dev
     volumes:
-      - ./data/speechbrain/models:/app/speechbrain_models
-      - ./data/speechbrain/cache/torch:/root/.cache/torch
-      - ./data/speechbrain/cache/huggingface:/root/.cache/huggingface
-      - ./data/speechbrain/data/torch:/data
+      - ./data/cache:/cache
       - ./config/speechbrain:/app/config
 
   mqtt:
