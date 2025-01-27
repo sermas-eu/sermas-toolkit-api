@@ -74,25 +74,36 @@ services:
 
   keycloak:
     command: start-dev
-    image: quay.io/keycloak/keycloak:24.0.4
+    image: quay.io/keycloak/keycloak:26.1
     environment:
-      - KEYCLOAK_ADMIN=admin
-      - KEYCLOAK_ADMIN_PASSWORD=admin
-      - KEYCLOAK_HOSTNAME=localhost
-      - KEYCLOAK_HTTP_PORT=8080
-      - KC_HOSTNAME_STRICT=false
-      - KC_PROXY=edge
+      # https://www.keycloak.org/server/all-config
+      - KC_HOSTNAME=http://localhost:8080/keycloak
+      - KC_HTTP_PORT=8080
       - KC_HTTP_RELATIVE_PATH=/keycloak
-      - KC_HOSTNAME_STRICT_HTTPS=false
-      - KC_HOSTNAME_STRICT=false
-      - KC_HOSTNAME_STRICT_BACKCHANNEL=true
       - KC_HEALTH_ENABLED=true
+      # new settings for v26
+      # https://www.keycloak.org/server/hostname
+      - KC_HOSTNAME_BACKCHANNEL_DYNAMIC=true
+      - KC_HOSTNAME_STRICT=false
+      - KC_HTTP_ENABLED=true
+      - KC_BOOTSTRAP_ADMIN_USERNAME=admin
+      - KC_BOOTSTRAP_ADMIN_PASSWORD=admin
+      - KC_PROXY_HEADERS=forwarded
+      - KC_HTTP_MANAGEMENT_RELATIVE_PATH=/keycloak-admin
+      # old settings v24
+      - KC_PROXY=edge
+      # - KC_ADMIN=admin
+      # - KC_ADMIN_PASSWORD=admin
+      # - KC_PROXY=edge
+      # - KC_HOSTNAME_STRICT_HTTPS=false
+      # - KC_HOSTNAME_STRICT=false
+      # - KC_HOSTNAME_STRICT_BACKCHANNEL=true
     networks:
       - sermas_dev
     volumes:
       - keycloak:/opt/keycloak/data
     healthcheck:
-      test: [ "CMD-SHELL", 'exec 3<>/dev/tcp/localhost/8080; echo -e "GET /keycloak/health HTTP/1.1\nhost: localhost:8080\n" >&3; timeout --preserve-status 1 cat <&3 | grep -m 1 status | grep -m 1 UP; ERROR=$?; exec 3<&-; exec 3>&-; exit $$ERROR' ]
+      test: [ "CMD-SHELL", 'exec 3<>/dev/tcp/localhost/9000; echo -e "GET /keycloak-admin/health HTTP/1.1\nhost: localhost:9000\n" >&3; timeout --preserve-status 1 cat <&3 | grep -m 1 status | grep -m 1 UP; ERROR=$?; exec 3<&-; exec 3>&-; exit $$ERROR' ]
       interval: 10s
       timeout: 5s
       retries: 5
