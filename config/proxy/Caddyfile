@@ -22,6 +22,10 @@
     reverse_proxy keycloak:8080
   }
 
+  handle_path /pilots-ra/* {
+    reverse_proxy pilots-ra:3004
+  }
+
   # NOTE: will use dev environment as default proxy, otherwise use the toolkit static build from sermas-toolkit-api
 
   route /api* {
