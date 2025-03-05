@@ -1,4 +1,5 @@
 /data
+/config/api/.env
 /.env
 /apps
 google_apis.json
