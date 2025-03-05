@@ -124,8 +124,8 @@ services:
 
   redis:
     image: redis:alpine
-    volumes:
-      - ./data/redis:/data
+    # volumes:
+    #   - ./data/redis:/data
     networks:
       - sermas_dev
 
